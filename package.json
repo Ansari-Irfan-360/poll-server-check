@@ -1,0 +1,45 @@
+{
+  "name": "poll-server-check",
+  "version": "1.0.1",
+  "main": "index.cjs",
+  "module": "index.js",
+  "types": "./types/poll-server-check.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "server",
+    "polling",
+    "server-check",
+    "poll-server-check",
+    "poll-server",
+    "poll-check",
+    "onrender-issue",
+    "server-downtime-issue",
+    "check-server",
+    "backend-check",
+    "check-if-server-is-awake"
+  ],
+  "author": "Ansari Mohammad Irfan",
+  "license": "MIT",
+  "description": "An npm package that checks if the server is running or if it's down. If the server is down, it repeatedly sends a check API to the backend to wake it up and displays toast notification of the current status.",
+  "type": "module",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "toastify-js": "^1.12.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ansari-Irfan-360/poll-server-check"
+  },
+  "homepage": "https://github.com/Ansari-Irfan-360/poll-server-check#readme",
+  "bugs": {
+    "url": "https://github.com/Ansari-Irfan-360/poll-server-check/issues"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/express": "^4.17.21",
+    "typescript": "^5.6.2"
+  }
+}

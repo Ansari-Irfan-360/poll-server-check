@@ -1,0 +1,7 @@
+function serverCheck(app) {
+  app.post("/check", async (req, res) => {
+    res.status(200).json({ msg: "Server is running" });
+  });
+}
+
+module.exports = serverCheck;

@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types"
+    ],
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
