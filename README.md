@@ -27,14 +27,14 @@ function MyComponent(){
 
 ### Server-Side
 
-In your server-side code, use the `serverPoll` function to set up an endpoint for API check. While using `serverPoll`, ensure you pass an Express application instance like `app` or `server`.
+In your server-side code, use the `serverCheck` function to set up an endpoint for API check. While using `serverCheck`, ensure you pass an Express application instance like `app` or `server`.
 
 ```
 import express from 'express';
-import { serverPoll } from 'poll-server-check';
+import { serverCheck } from 'poll-server-check';
 
 const app = express();
-serverPoll(app);
+serverCheck(app);
 ```
 
 ## API
@@ -43,7 +43,7 @@ serverPoll(app);
 
 - **BackendUrl**: The base URL of your backend server.
   
-### `serverPoll(app)`
+### `serverCheck(app)`
 
 - **app**: The Express app instance to which the API check route will be added.
 
