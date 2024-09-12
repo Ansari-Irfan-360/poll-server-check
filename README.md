@@ -12,15 +12,15 @@ To use the `poll-server-check` package, you first need to install it via npm:
 
 ### Client-Side
 
-In your client-side code, you can use the `clientPoll` function to monitor your server's availability and display notifications. While using `clientPoll`, ensure you pass the backend URL and place it inside a `useEffect` hook if you are working in a React environment.
+In your client-side code, you can use the `` function to monitor your server's availability and display notifications. While using ``, ensure you pass the backend URL and place it inside a `useEffect` hook if you are working in a React environment.
 
 ```
 import { useEffect } from 'react';
-import { clientPoll } from 'poll-server-check';
+import { clientCheck } from 'poll-server-check';
 
 function MyComponent(){
   useEffect(() => {
-    clientPoll(process.env.BACKEND_URL);
+    clientCheck(process.env.BACKEND_URL);
   }, []);
 }
 ```
@@ -39,7 +39,7 @@ serverPoll(app);
 
 ## API
 
-### `clientPoll(BackendUrl)`
+### `clientCheck(BackendUrl)`
 
 - **BackendUrl**: The base URL of your backend server.
   
