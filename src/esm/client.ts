@@ -96,7 +96,7 @@ if (typeof window !== 'undefined') {
 
 
 
-function clientPoll(BackendUrl) {
+function clientCheck(BackendUrl) {
   const axiosInstance = axios.create({
     baseURL: BackendUrl,
     timeout: 4000,
@@ -106,6 +106,7 @@ function clientPoll(BackendUrl) {
   });
 
   let intervalId;
+  let timeoutId;
   let loadingToast;
 
   const startServer = async () => {
@@ -121,6 +122,7 @@ function clientPoll(BackendUrl) {
         backgroundColor: '#ADD8E6',
       }).showToast();
 
+      // Interval to check if the server has started
       intervalId = setInterval(async () => {
         try {
           await axiosInstance.post('/check');
@@ -131,29 +133,34 @@ function clientPoll(BackendUrl) {
             position: 'center',
             backgroundColor: '#4CAF50',
           }).showToast();
+
+          // Clear both the interval and timeout once the server has started
           clearInterval(intervalId);
+          clearTimeout(timeoutId); // Prevent the failure message from showing
           loadingToast.hideToast();
         } catch (error) {
           console.log('Server not started yet, retrying...');
         }
       }, 4000);
-    }
 
-    setTimeout(() => {
-      clearInterval(intervalId);
-      loadingToast.hideToast();
-      Toastify({
-        text: 'Failed to Start Server [Retry]',
-        duration: 10000,
-        gravity: 'top',
-        position: 'center',
-        backgroundColor: '#f44336',
-      }).showToast();
-      // window.location.reload();
-    }, 60000);
+      // Timeout to stop trying after 60 seconds
+      timeoutId = setTimeout(() => {
+        clearInterval(intervalId);
+        loadingToast.hideToast(); // Hide loading toast
+        Toastify({
+          text: 'Failed to Start Server [Retry]',
+          duration: 10000,
+          gravity: 'top',
+          position: 'center',
+          backgroundColor: '#f44336',
+        }).showToast();
+        // Optionally reload the page or retry
+        // window.location.reload();
+      }, 60000);
+    }
   };
 
   startServer();
 }
 
-export default clientPoll;
+export default clientCheck;
