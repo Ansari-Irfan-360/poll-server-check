@@ -102,7 +102,8 @@ if (typeof window !== 'undefined') {
     style.appendChild(document.createTextNode(toastifyCSS));
     document.head.appendChild(style);
 }
-function clientPoll(BackendUrl) {
+
+function clientCheck(BackendUrl: string) {
     const axiosInstance = axios_1.default.create({
         baseURL: BackendUrl,
         timeout: 4000,
@@ -110,24 +111,30 @@ function clientPoll(BackendUrl) {
             'content-type': 'application/json',
         },
     });
-    let intervalId;
-    let loadingToast;
+
+    let intervalId: NodeJS.Timeout;
+    let timeoutId: NodeJS.Timeout;
+    let loadingToast: any;
+
     const startServer = () => __awaiter(this, void 0, void 0, function* () {
         try {
             yield axiosInstance.post('/check');
-        }
-        catch (_a) {
+        } catch (_a) {
+            // Show "Starting the Server" toast
             loadingToast = (0, toastify_js_1.default)({
                 text: 'Starting the Server',
-                duration: -1,
+                duration: -1, // Infinite duration until manually hidden
                 close: true,
                 gravity: 'top',
                 position: 'center',
                 backgroundColor: '#ADD8E6',
             }).showToast();
+
+            // Start polling the server every 4 seconds
             intervalId = setInterval(() => __awaiter(this, void 0, void 0, function* () {
                 try {
                     yield axiosInstance.post('/check');
+                    // Server started successfully, show success toast
                     (0, toastify_js_1.default)({
                         text: 'Server Started',
                         duration: 3000,
@@ -135,27 +142,39 @@ function clientPoll(BackendUrl) {
                         position: 'center',
                         backgroundColor: '#4CAF50',
                     }).showToast();
+
+                    // Clear both interval and timeout
                     clearInterval(intervalId);
+                    clearTimeout(timeoutId);
+
+                    // Hide loading toast
                     loadingToast.hideToast();
-                }
-                catch (error) {
+                } catch (error) {
                     console.log('Server not started yet, retrying...');
                 }
             }), 4000);
+
+            // After 60 seconds, stop polling and show failure toast
+            timeoutId = setTimeout(() => {
+                clearInterval(intervalId); // Stop the polling
+                loadingToast.hideToast(); // Hide loading toast
+
+                // Show failure toast
+                (0, toastify_js_1.default)({
+                    text: 'Failed to Start Server [Retry]',
+                    duration: 10000,
+                    gravity: 'top',
+                    position: 'center',
+                    backgroundColor: '#f44336',
+                }).showToast();
+
+                // Optionally reload the page
+                // window.location.reload();
+            }, 60000);
         }
-        setTimeout(() => {
-            clearInterval(intervalId);
-            loadingToast.hideToast();
-            (0, toastify_js_1.default)({
-                text: 'Failed to Start Server [Retry]',
-                duration: 10000,
-                gravity: 'top',
-                position: 'center',
-                backgroundColor: '#f44336',
-            }).showToast();
-            // window.location.reload();
-        }, 60000);
     });
+
     startServer();
 }
-exports.default = clientPoll;
+
+exports.default = clientCheck;
