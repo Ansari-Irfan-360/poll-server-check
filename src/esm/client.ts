@@ -112,52 +112,58 @@ function clientCheck(BackendUrl) {
   const startServer = async () => {
     try {
       await axiosInstance.post('/check');
-    } catch {
+    } catch (err) {
       loadingToast = Toastify({
         text: 'Starting the Server',
-        duration: -1,
+        duration: -1, // Infinite duration until manually hidden
         close: true,
         gravity: 'top',
         position: 'center',
         backgroundColor: '#ADD8E6',
       }).showToast();
 
-      // Interval to check if the server has started
-      intervalId = setInterval(async () => {
-        try {
-          await axiosInstance.post('/check');
+      try {
+        intervalId = setInterval(async () => {
+          try {
+            await axiosInstance.post('/check');
+            Toastify({
+              text: 'Server Started',
+              duration: 3000,
+              gravity: 'top',
+              position: 'center',
+              backgroundColor: '#4CAF50',
+            }).showToast();
+
+            // Clear both interval and timeout after the server starts
+            clearTimeout(timeoutId);
+            clearInterval(intervalId);
+            loadingToast.hideToast();
+          } catch (error) {
+            console.log('Server not started yet, retrying...');
+          }
+        }, 4000);
+
+        timeoutId = setTimeout(() => {
+          clearInterval(intervalId);
+          loadingToast.hideToast();
           Toastify({
-            text: 'Server Started',
-            duration: 3000,
+            text: 'Failed to Start Server [Retry]',
+            duration: 10000,
             gravity: 'top',
             position: 'center',
-            backgroundColor: '#4CAF50',
+            backgroundColor: '#f44336',
           }).showToast();
-
-          // Clear both interval and timeout
-          clearTimeout(timeoutId);// Prevent the failure message from showing
-          clearInterval(intervalId);// Clear both the interval and timeout once the server has started
-
-          loadingToast.hideToast();
-        } catch (error) {
-          console.log('Server not started yet, retrying...');
-        }
-      }, 4000);
-
-      // Timeout to stop trying after 60 seconds
-      timeoutId = setTimeout(() => {
+          // Optionally reload the page or retry
+          // window.location.reload();
+        }, 60000);
+      } catch (error) {
+        console.error("Error during server polling:", error);
+      } finally {
+        // Ensure both interval and timeout are cleared
         clearInterval(intervalId);
-        loadingToast.hideToast(); // Hide loading toast
-        Toastify({
-          text: 'Failed to Start Server [Retry]',
-          duration: 10000,
-          gravity: 'top',
-          position: 'center',
-          backgroundColor: '#f44336',
-        }).showToast();
-        // Optionally reload the page or retry
-        // window.location.reload();
-      }, 60000);
+        clearTimeout(timeoutId);
+        loadingToast.hideToast();
+      }
     }
   };
 

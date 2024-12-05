@@ -118,9 +118,10 @@ function clientCheck(BackendUrl: string) {
 
     const startServer = () => __awaiter(this, void 0, void 0, function* () {
         try {
+            // Attempt to check if the server is already running
             yield axiosInstance.post('/check');
         } catch (_a) {
-            // Show "Starting the Server" toast
+            // Show "Starting the Server" toast if server is not running
             loadingToast = (0, toastify_js_1.default)({
                 text: 'Starting the Server',
                 duration: -1, // Infinite duration until manually hidden
@@ -130,48 +131,56 @@ function clientCheck(BackendUrl: string) {
                 backgroundColor: '#ADD8E6',
             }).showToast();
 
-            // Start polling the server every 4 seconds
-            intervalId = setInterval(() => __awaiter(this, void 0, void 0, function* () {
-                try {
-                    yield axiosInstance.post('/check');
-                    // Server started successfully, show success toast
+            try {
+                // Start polling the server every 4 seconds
+                intervalId = setInterval(() => __awaiter(this, void 0, void 0, function* () {
+                    try {
+                        yield axiosInstance.post('/check');
+                        // Server started successfully, show success toast
+                        (0, toastify_js_1.default)({
+                            text: 'Server Started',
+                            duration: 3000,
+                            gravity: 'top',
+                            position: 'center',
+                            backgroundColor: '#4CAF50',
+                        }).showToast();
+
+                        // Clear both interval and timeout
+                        clearTimeout(timeoutId); // Prevent the failure message from showing
+                        clearInterval(intervalId); // Clear both the interval and timeout once the server has started
+
+                        // Hide loading toast
+                        loadingToast.hideToast();
+                    } catch (error) {
+                        console.log('Server not started yet, retrying...');
+                    }
+                }), 4000);
+
+                // After 60 seconds, stop polling and show failure toast if the server isn't started
+                timeoutId = setTimeout(() => {
+                    clearInterval(intervalId); // Stop the polling
+                    loadingToast.hideToast(); // Hide loading toast
+
+                    // Show failure toast only if the server didn't start in time
                     (0, toastify_js_1.default)({
-                        text: 'Server Started',
-                        duration: 3000,
+                        text: 'Failed to Start Server [Retry]',
+                        duration: 10000,
                         gravity: 'top',
                         position: 'center',
-                        backgroundColor: '#4CAF50',
+                        backgroundColor: '#f44336',
                     }).showToast();
 
-                   // Clear both interval and timeout
-                    clearTimeout(timeoutId);// Prevent the failure message from showing
-                    clearInterval(intervalId);// Clear both the interval and timeout once the server has started
-
-
-                    // Hide loading toast
-                    loadingToast.hideToast();
-                } catch (error) {
-                    console.log('Server not started yet, retrying...');
-                }
-            }), 4000);
-
-            // After 60 seconds, stop polling and show failure toast
-            timeoutId = setTimeout(() => {
-                clearInterval(intervalId); // Stop the polling
+                    // Optionally reload the page if needed
+                    // window.location.reload();
+                }, 60000);
+            } catch (error) {
+                console.error("Error during server polling:", error);
+            } finally {
+                // Cleanup: Ensure that interval and timeout are cleared, even if there's an error
+                clearInterval(intervalId); // Clear interval if polling stops
+                clearTimeout(timeoutId); // Clear timeout if polling stops
                 loadingToast.hideToast(); // Hide loading toast
-
-                // Show failure toast
-                (0, toastify_js_1.default)({
-                    text: 'Failed to Start Server [Retry]',
-                    duration: 10000,
-                    gravity: 'top',
-                    position: 'center',
-                    backgroundColor: '#f44336',
-                }).showToast();
-
-                // Optionally reload the page
-                // window.location.reload();
-            }, 60000);
+            }
         }
     });
 
