@@ -143,9 +143,10 @@ function clientCheck(BackendUrl: string) {
                         backgroundColor: '#4CAF50',
                     }).showToast();
 
-                    // Clear both interval and timeout
-                    clearInterval(intervalId);
-                    clearTimeout(timeoutId);
+                   // Clear both interval and timeout
+                    clearTimeout(timeoutId);// Prevent the failure message from showing
+                    clearInterval(intervalId);// Clear both the interval and timeout once the server has started
+
 
                     // Hide loading toast
                     loadingToast.hideToast();
