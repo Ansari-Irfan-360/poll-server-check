@@ -134,9 +134,10 @@ function clientCheck(BackendUrl) {
             backgroundColor: '#4CAF50',
           }).showToast();
 
-          // Clear both the interval and timeout once the server has started
-          clearInterval(intervalId);
-          clearTimeout(timeoutId); // Prevent the failure message from showing
+         // Clear both interval and timeout
+         clearTimeout(timeoutId);// Prevent the failure message from showing
+         clearInterval(intervalId);// Clear both the interval and timeout once the server has started
+
           loadingToast.hideToast();
         } catch (error) {
           console.log('Server not started yet, retrying...');
