@@ -1,6 +1,6 @@
 {
   "name": "poll-server-check",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "index.cjs",
   "module": "index.js",
   "types": "./types/poll-server-check.d.ts",
